@@ -7,7 +7,11 @@
 
         <variable
             name="data"
-            type="java.util.List&lt;com.sagetripp.simplelauncher.MainActivity.App>" />
+            type="java.util.List&lt;com.sagetripp.simplelauncher.bean.App>" />
+
+        <variable
+            name="dockerHeight"
+            type="Integer" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -15,12 +19,27 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
+        <ImageView
+            android:id="@+id/imageView"
+            drawable="@{@drawable/picture}"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_apps"
-            datas="data"
-            itemLayout="@layout/adapter_app"
+            datas="@{data}"
+            itemLayout="@{@layout/adapter_app}"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="500dp"
+            layoutHeight="@{dockerHeight}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:itemlist="@layout/adapter_app" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>

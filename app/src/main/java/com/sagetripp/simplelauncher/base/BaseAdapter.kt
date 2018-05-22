@@ -8,8 +8,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.sagetripp.simplelauncher.BR
 
-abstract class BaseAdapter<D> : RecyclerView.Adapter<BaseAdapter.ViewHolder<D>>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<D> {
+abstract class BaseAdapter : RecyclerView.Adapter<BaseAdapter.ViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater =
                 LayoutInflater.from(parent.context)
         val binding: ViewDataBinding = DataBindingUtil.inflate(
@@ -19,26 +19,26 @@ abstract class BaseAdapter<D> : RecyclerView.Adapter<BaseAdapter.ViewHolder<D>>(
 
     override fun getItemCount(): Int = getData().size
 
-    override fun onBindViewHolder(holder: ViewHolder<D>, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getData()[position])
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position == 0)
+        if (getLayoutIdByPosition(position) == 0)
             return super.getItemViewType(position)
         return getLayoutIdByPosition(position)
     }
 
-    open fun getData(): List<D> {
+    open fun getData(): List<Any> {
         return emptyList()
     }
 
     @LayoutRes
     open fun getLayoutIdByPosition(position: Int): Int = 0
 
-    class ViewHolder<in D>(val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: D) {
-            binding.setVariable(BR.data, data)
+    class ViewHolder(val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(data: Any) {
+            binding.setVariable(BR.itemData, data)
             binding.executePendingBindings()
         }
     }
