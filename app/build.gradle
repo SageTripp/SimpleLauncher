@@ -16,6 +16,9 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+
+        renderscriptTargetApi 21
+        renderscriptSupportModeEnabled  true
     }
     buildTypes {
         release {
@@ -54,5 +57,8 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:$support_version"
     implementation 'jp.wasabeef:glide-transformations:2.0.2'
     implementation 'com.github.bumptech.glide:glide:4.7.1'
-    kapt "com.android.databinding:compiler:$android_plugin_version"
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    //    kapt "com.android.databinding:compiler:$android_plugin_version"
+    compile project(':blurlib')
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.14'
 }

@@ -1,17 +1,27 @@
 package com.sagetripp.simplelauncher
 
-import android.app.Activity
 import android.databinding.BindingAdapter
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.support.annotation.IdRes
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.sagetripp.blurlib.blur
 import com.sagetripp.simplelauncher.base.BaseAdapter
+import com.sagetripp.simplelauncher.extend.crop
+import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import org.reactivestreams.Subscriber
+import java.util.concurrent.TimeUnit
+
 
 @BindingAdapter("datas", "itemLayout")
 fun RecyclerView.setSingleItem(datas: Iterable<Any>, @LayoutRes itemLayout: Int) {
@@ -37,10 +47,49 @@ fun ImageView.setDrawable(drawable: Drawable) {
     Glide.with(context).load(drawable).into(this)
 }
 
+@BindingAdapter("radius", "reference", "downSampling")
+fun View.blur(radius: Int, @IdRes reference: Int, downSampling: Int) {
+    Flowable.interval(1, 30, TimeUnit.SECONDS)
+            .subscribeOn(Schedulers.io())
+            .onErrorResumeNext { subscriber: Subscriber<in Long> ->
+                subscriber.onNext(0)
+            }
+            .map {
+                val view = this.rootView.findViewById<View>(reference)
+                val scale = 1f / downSampling
+                val viewWidth = view.width
+                val viewHeight = view.height
+                val bmpWidth = Math.round(viewWidth * scale)
+                val bmpHeight = Math.round(viewHeight * scale)
+
+                var dest = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+                if (dest.width != bmpWidth || dest.height != bmpHeight) {
+                    dest = Bitmap.createBitmap(bmpWidth, bmpHeight, Bitmap.Config.ARGB_8888)
+                }
+
+                val c = Canvas(dest)
+                if (downSampling > 1) {
+                    c.scale(scale, scale)
+                }
+                view.draw(c)
+                dest = dest.crop(this, downSampling)
+                dest.blur(context, radius)
+            }
+            .take(3)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ dest ->
+
+                this.background = BitmapDrawable(context.resources, dest)
+            }, Throwable::printStackTrace)
+
+
+}
+
 @BindingAdapter("layoutHeight")
 fun View.setHeight(dp: Int) {
     layoutParams.height = dp
     layoutParams = layoutParams
+    invalidate()
 }
 
 @BindingAdapter("marginHorizontal")

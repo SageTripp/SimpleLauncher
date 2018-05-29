@@ -14,8 +14,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val mainBinding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
         mainBinding.data = getAppList()
+        mainBinding.dockerLabel = "主页"
         getScreenWidth { width, _ ->
-            mainBinding.dockerHeight = width / 4 * 2 + 30
+            mainBinding.dockerHeight = width / 4 * 2
         }
     }
 
