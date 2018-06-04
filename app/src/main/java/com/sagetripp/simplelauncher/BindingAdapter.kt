@@ -49,39 +49,43 @@ fun ImageView.setDrawable(drawable: Drawable) {
 
 @BindingAdapter("radius", "reference", "downSampling")
 fun View.blur(radius: Int, @IdRes reference: Int, downSampling: Int) {
-    Flowable.interval(1, 30, TimeUnit.SECONDS)
-            .subscribeOn(Schedulers.io())
-            .onErrorResumeNext { subscriber: Subscriber<in Long> ->
-                subscriber.onNext(0)
-            }
-            .map {
-                val view = this.rootView.findViewById<View>(reference)
-                val scale = 1f / downSampling
-                val viewWidth = view.width
-                val viewHeight = view.height
-                val bmpWidth = Math.round(viewWidth * scale)
-                val bmpHeight = Math.round(viewHeight * scale)
-
-                var dest = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
-                if (dest.width != bmpWidth || dest.height != bmpHeight) {
-                    dest = Bitmap.createBitmap(bmpWidth, bmpHeight, Bitmap.Config.ARGB_8888)
+    println(this.javaClass.name)
+    this.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
+        Flowable.interval(80, 500, TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.io())
+                .onErrorResumeNext { subscriber: Subscriber<in Long> ->
+                    subscriber.onNext(0)
+                    println("背景失败==> ${this.javaClass.name}")
                 }
+                .map {
+                    println("生成背景==> ${this.javaClass.name}")
+                    val view = this.rootView.findViewById<View>(reference)
+                    val scale = 1f / downSampling
+                    val viewWidth = view.width
+                    val viewHeight = view.height
+                    val bmpWidth = Math.round(viewWidth * scale)
+                    val bmpHeight = Math.round(viewHeight * scale)
 
-                val c = Canvas(dest)
-                if (downSampling > 1) {
-                    c.scale(scale, scale)
+                    var dest = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+                    if (dest.width != bmpWidth || dest.height != bmpHeight) {
+                        dest = Bitmap.createBitmap(bmpWidth, bmpHeight, Bitmap.Config.ARGB_8888)
+                    }
+
+                    val c = Canvas(dest)
+                    if (downSampling > 1) {
+                        c.scale(scale, scale)
+                    }
+                    view.draw(c)
+                    dest = dest.crop(this, downSampling)
+                    dest.blur(context, radius)
                 }
-                view.draw(c)
-                dest = dest.crop(this, downSampling)
-                dest.blur(context, radius)
-            }
-            .take(3)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ dest ->
-
-                this.background = BitmapDrawable(context.resources, dest)
-            }, Throwable::printStackTrace)
-
+                .take(1)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ dest ->
+                    println("设置背景==> ${this.javaClass.name}")
+                    v.background = BitmapDrawable(context.resources, dest)
+                }, Throwable::printStackTrace)
+    }
 
 }
 

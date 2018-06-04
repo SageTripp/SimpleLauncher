@@ -25,7 +25,7 @@
 
         <ImageView
             android:id="@+id/imageView"
-            drawable="@{@drawable/picture}"
+            drawable="@{@drawable/she}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@null"
@@ -36,20 +36,19 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            downSampling="@{8}"
             layoutHeight="@{dockerHeight / 5}"
+            radius="@{8}"
+            reference="@{@id/imageView}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:paddingBottom="8dp"
             android:paddingEnd="12dp"
             android:paddingStart="12dp"
             android:paddingTop="8dp"
             android:text="@{dockerLabel}"
-            android:gravity="center_vertical"
-            android:background="#AA000000"
             android:textStyle="bold"
-            radius="@{8}"
-            reference="@{@id/imageView}"
-            downSampling="@{8}"
             app:layout_constraintBottom_toTopOf="@+id/rv_apps"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -58,13 +57,13 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_apps"
             datas="@{data}"
+            downSampling="@{16}"
             itemLayout="@{@layout/adapter_app}"
             layoutHeight="@{dockerHeight}"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             radius="@{10}"
             reference="@{@id/imageView}"
-            downSampling="@{16}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:itemlist="@layout/adapter_app" />
 
