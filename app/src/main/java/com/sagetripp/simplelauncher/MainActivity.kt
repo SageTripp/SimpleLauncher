@@ -1,6 +1,6 @@
 package com.sagetripp.simplelauncher
 
-import android.content.pm.ApplicationInfo
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -21,25 +21,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getAppList(): List<App> {
-        val packages = packageManager.getInstalledPackages(0)
-        println("app数量：${packages.size}")
+        val launchers = packageManager.queryIntentActivities(Intent(Intent.ACTION_MAIN, null).addCategory(Intent.CATEGORY_LAUNCHER), 0)
 
-        return packages
-                .filter {
-                    with(it.applicationInfo) {
-                        flags and ApplicationInfo.FLAG_SYSTEM == 0
-                    }
-                }
-                .map {
-                    with(it.applicationInfo) {
-                        App(loadLabel(packageManager).toString(),
-                                loadIcon(packageManager)
-                                        ?: resources.getDrawable(R.mipmap.ic_launcher),
-                                flags and ApplicationInfo.FLAG_SYSTEM == 0)
-                    }
-                }
+        return launchers.map {
+            App(it.loadLabel(packageManager).toString(), it.loadIcon(packageManager), it)
+        }
                 .sortedBy { it.name }
-                .sortedBy { !it.isSystem }
-
     }
 }

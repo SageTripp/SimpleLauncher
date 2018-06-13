@@ -13,8 +13,14 @@ import android.widget.Toast
 toast
  */
 
+val Context.toast: Toast
+    get() = Toast.makeText(this, "", Toast.LENGTH_LONG)
+
 fun Context.toast(msg: String) {
-    Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+    toast.apply {
+        cancel()
+        setText(msg)
+    }.show()
 }
 
 fun Activity.toast(msg: String) {
