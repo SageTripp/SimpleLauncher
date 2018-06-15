@@ -55,10 +55,8 @@ fun View.blur(radius: Int, @IdRes reference: Int, downSampling: Int) {
                 .subscribeOn(Schedulers.io())
                 .onErrorResumeNext { subscriber: Subscriber<in Long> ->
                     subscriber.onNext(0)
-                    println("背景失败==> ${this.javaClass.name}")
                 }
                 .map {
-                    println("生成背景==> ${this.javaClass.name}")
                     val view = this.rootView.findViewById<View>(reference)
                     val scale = 1f / downSampling
                     val viewWidth = view.width

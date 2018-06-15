@@ -4,8 +4,9 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.sagetripp.simplelauncher.bean.App
+import com.sagetripp.simplelauncher.bean.Soft
 import com.sagetripp.simplelauncher.databinding.ActivityMainBinding
+import com.sagetripp.simplelauncher.extend.boxStore
 import com.sagetripp.simplelauncher.extend.getScreenWidth
 
 class MainActivity : AppCompatActivity() {
@@ -20,11 +21,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getAppList(): List<App> {
+    private fun getAppList(): List<Soft> {
         val launchers = packageManager.queryIntentActivities(Intent(Intent.ACTION_MAIN, null).addCategory(Intent.CATEGORY_LAUNCHER), 0)
 
         return launchers.map {
-            App(it.loadLabel(packageManager).toString(), it.loadIcon(packageManager), it)
+            Soft(it.loadLabel(packageManager).toString(), it.loadIcon(packageManager), it).also { soft ->
+                boxStore.boxFor(Soft::class.java).apply {
+                    put(soft)
+                }
+            }
         }
                 .sortedBy { it.name }
     }

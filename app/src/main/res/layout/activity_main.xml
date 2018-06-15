@@ -8,7 +8,7 @@
 
         <variable
             name="data"
-            type="java.util.List&lt;com.sagetripp.simplelauncher.bean.App>" />
+            type="java.util.List&lt;com.sagetripp.simplelauncher.bean.Soft>" />
 
         <variable
             name="dockerHeight"

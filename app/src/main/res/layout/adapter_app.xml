@@ -9,7 +9,7 @@
 
         <variable
             name="itemData"
-            type="com.sagetripp.simplelauncher.bean.App" />
+            type="com.sagetripp.simplelauncher.bean.Soft" />
     </data>
 
     <android.support.constraint.ConstraintLayout
